@@ -88,7 +88,8 @@ export function getNewSelection(
   const start = editor.document.offsetAt(startAnchor.with(firstLineNum, 0));
   const lastLinePos = startAnchor.with(lastLineNum, 0);
   const lastLine = editor.document.lineAt(lastLinePos);
-  const end = editor.document.offsetAt(lastLinePos) + lastLine.text.length;
+  // Add one to get the line separator
+  const end = editor.document.offsetAt(lastLinePos) + lastLine.text.length + 1;
 
   return {
     indentCount,
