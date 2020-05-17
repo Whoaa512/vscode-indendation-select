@@ -21,12 +21,17 @@ function countSpacingAtPosition(
   return editor.document.lineAt(anchor).firstNonWhitespaceCharacterIndex;
 }
 
-function searchForNextLine(
-  editor: vscode.TextEditor,
-  indentCount: number,
-  startLineNum: number,
-  step: number,
-): number {
+function searchForNextLine({
+  editor,
+  indentCount,
+  startLineNum,
+  step,
+}: {
+  editor: vscode.TextEditor;
+  indentCount: number;
+  startLineNum: number;
+  step: number;
+}): number {
   let currentIndent = Infinity;
   let lineNum = startLineNum;
   while (currentIndent >= indentCount && currentIndent >= 0) {
@@ -67,8 +72,18 @@ export function getNewSelection(
 
   // search up/down from selection to find all lines with matching indentation
   //    including empty newlines
-  const firstLineNum = searchForNextLine(editor, indentCount, startLineNum, -1);
-  const lastLineNum = searchForNextLine(editor, indentCount, startLineNum, 1);
+  const firstLineNum = searchForNextLine({
+    editor,
+    indentCount,
+    startLineNum,
+    step: -1,
+  });
+  const lastLineNum = searchForNextLine({
+    editor,
+    indentCount,
+    startLineNum,
+    step: 1,
+  });
 
   const start = editor.document.offsetAt(startAnchor.with(firstLineNum, 0));
   const lastLinePos = startAnchor.with(lastLineNum, 0);
