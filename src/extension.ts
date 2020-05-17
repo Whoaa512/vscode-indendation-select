@@ -23,18 +23,31 @@ function countSpacingAtPosition(
 
 function searchForNextLine({
   editor,
-  indentCount,
   startLineNum,
   step,
 }: {
   editor: vscode.TextEditor;
-  indentCount: number;
   startLineNum: number;
   step: number;
 }): number {
-  let currentIndent = Infinity;
+  let indentCount = countSpacingAtPosition(editor, startLineNum);
   let lineNum = startLineNum;
-  while (currentIndent >= indentCount && currentIndent >= 0) {
+
+  // Find first non-empty indent count from start
+  while (indentCount === 0) {
+    lineNum += step;
+    indentCount = countSpacingAtPosition(editor, lineNum);
+  }
+
+  // Then find last line before indentation changes
+  let currentIndent = Infinity;
+  while (
+    currentIndent >= indentCount &&
+    currentIndent >= 0 &&
+    // bounds checks
+    lineNum >= 0 &&
+    lineNum < editor.document.lineCount
+  ) {
     lineNum += step;
     let next = countSpacingAtPosition(editor, lineNum + step);
     // Skip empty lines
@@ -50,37 +63,25 @@ export function getNewSelection(
   editor: vscode.TextEditor,
   selection: vscode.Selection,
 ): {
-  indentCount: number;
   start: number;
   end: number;
 } {
   const startAnchor = selection.anchor;
-  let indentCount = countSpacingAtPosition(editor, startAnchor);
-  // console.log('indentCount', indentCount);
+  console.log('selection', selection);
 
   let startLineNum: number = startAnchor.line;
-  // Handle case on empty newline between indented text
-  if (indentCount === 0) {
-    indentCount = Math.min(
-      countSpacingAtPosition(editor, startAnchor.line + 1),
-      countSpacingAtPosition(editor, startAnchor.line - 1),
-    );
-    startLineNum += 1;
-    // console.log('indentCount', indentCount);
-  }
-  // console.log('startLineNum', startLineNum);
+  let endLineNum: number = selection.end.line;
+  console.log('startLineNum', startLineNum);
 
   // search up/down from selection to find all lines with matching indentation
   //    including empty newlines
   const firstLineNum = searchForNextLine({
     editor,
-    indentCount,
     startLineNum,
     step: -1,
   });
   const lastLineNum = searchForNextLine({
     editor,
-    indentCount,
     startLineNum,
     step: 1,
   });
@@ -92,7 +93,6 @@ export function getNewSelection(
   const end = editor.document.offsetAt(lastLinePos) + lastLine.text.length + 1;
 
   return {
-    indentCount,
     start,
     end,
   };
