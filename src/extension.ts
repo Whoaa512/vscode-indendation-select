@@ -118,7 +118,11 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      multiSelectText(editor);
+      try {
+        multiSelectText(editor);
+      } catch (error) {
+        console.error(error);
+      }
     }),
   );
 }
