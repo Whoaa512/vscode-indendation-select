@@ -10,14 +10,20 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:indentation-select.helloWorld"
+    "onCommand:indentation-select.select"
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "keybindings":[
+      {
+        "command": "indentation-select.select",
+        "key": "cmd+shift+j"
+      }
+    ],
     "commands": [
       {
-        "command": "indentation-select.helloWorld",
-        "title": "Hello World"
+        "command": "indentation-select.select",
+        "title": "Select text at same indentation level"
       }
     ]
   },
