@@ -4,6 +4,10 @@
   "description": "Select everything at the same indentation level",
   "version": "1.0.0",
   "publisher": "whoaa512",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Whoaa512/vscode-indendation-select.git"
+  },
   "engines": {
     "vscode": "^1.45.0"
   },
