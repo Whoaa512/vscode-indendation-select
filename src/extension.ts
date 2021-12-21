@@ -59,7 +59,7 @@ function searchForNextLine({
   return lineNum;
 }
 
-export function getNewSelection(
+export function getNewSelectionIndex(
   editor: vscode.TextEditor,
   selection: vscode.Selection,
 ): {
@@ -98,14 +98,22 @@ export function getNewSelection(
   };
 }
 
+function createNewSelection(
+  editor: vscode.TextEditor,
+  selection: vscode.Selection,
+) {
+  const newSelect = getNewSelectionIndex(editor, selection);
+  return new vscode.Selection(
+    editor.document.positionAt(newSelect.start), //convert text index to vs selection index
+    editor.document.positionAt(newSelect.end),
+  );
+}
+
 function multiSelectText(editor: vscode.TextEditor) {
-  editor.selections = editor.selections.map((selection) => {
-    const newSelect = getNewSelection(editor, selection);
-    return new vscode.Selection(
-      editor.document.positionAt(newSelect.start), //convert text index to vs selection index
-      editor.document.positionAt(newSelect.end),
-    );
-  });
+  console.log('editor.selections.length', editor.selections.length);
+  editor.selections = editor.selections.map((selection) =>
+    createNewSelection(editor, selection),
+  );
 }
 
 // this method is called when your extension is activated
