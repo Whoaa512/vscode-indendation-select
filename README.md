@@ -1,7 +1,8 @@
-# indentation-select README
+# [DEPRECATED] indentation-select README
 > Select code at the same indentation level
 
-TODO: Add animation
+# Use https://github.com/haberdashPI/vscode-select-by-indent instead
+
 
 ## Known Issues
 
